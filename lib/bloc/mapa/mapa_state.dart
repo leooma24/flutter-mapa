@@ -26,8 +26,8 @@ class MapaState {
     mapaListo: mapaListo ?? this.mapaListo,
     dibujarRecorrido: dibujarRecorrido ?? this.dibujarRecorrido,
     seguirUbicacion: seguirUbicacion ?? this.seguirUbicacion,
-    polylines: polylines ?? this.polylines,
     ubicacionCentral: ubicacionCentral ?? this.ubicacionCentral,
+    polylines: polylines ?? this.polylines
   );
 
 }

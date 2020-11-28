@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapas_app/bloc/busqueda/busqueda_bloc.dart';
 import 'package:mapas_app/bloc/mapa/mapa_bloc.dart';
 import 'package:mapas_app/bloc/mi_ubicacion/mi_ubicacion_bloc.dart';
-import 'package:mapas_app/bloc/widgets/widgets.dart';
+
+import 'package:mapas_app/widgets/widgets.dart';
 
 class MapaPage extends StatefulWidget {  
 
@@ -26,11 +28,23 @@ class _MapaPageState extends State<MapaPage> {
 
   @override
   Widget build(BuildContext context) {
+    final busquedaBloc = context.watch<BusquedaBloc>();
     return Scaffold(
-      body: BlocBuilder<MiUbicacionBloc, MiUbicacionState>(
-        builder: ( _ , state) {             
-          return crearMapa(state);
-        }
+      body: Stack(
+        children: [
+          BlocBuilder<MiUbicacionBloc, MiUbicacionState>(
+            builder: ( _ , state) {             
+              return crearMapa(state);
+            }
+          ),
+          // Hacer el toggle cuando estoy manualmente
+          busquedaBloc.state.seleccionManual 
+          ? MarcadorManual()
+          : Positioned(
+            top: 15,            
+            child: SearchBar()
+          )
+        ],
       ),
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -55,15 +69,19 @@ class _MapaPageState extends State<MapaPage> {
       zoom: 15
     );
 
-    return GoogleMap(
-      initialCameraPosition: cameraPosition,
-      compassEnabled: true,
-      zoomControlsEnabled: false,
-      onMapCreated: mapaBloc.initMapa,
-      polylines: mapaBloc.state.polylines.values.toSet(),
-      onCameraMove: ( cameraPosition ) {
-        mapaBloc.add( OnMovioMapa( cameraPosition.target ));
-      }
-    );
+    return BlocBuilder<MapaBloc, MapaState>(
+      builder: (BuildContext context, state) { 
+        return GoogleMap(
+          initialCameraPosition: cameraPosition,
+          compassEnabled: true,
+          zoomControlsEnabled: false,
+          onMapCreated: mapaBloc.initMapa,
+          polylines: mapaBloc.state.polylines.values.toSet(),
+          onCameraMove: ( cameraPosition ) {
+            mapaBloc.add( OnMovioMapa( cameraPosition.target ));
+          }
+        );
+      },
+    );    
   }
 }
