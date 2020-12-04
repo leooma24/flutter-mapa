@@ -65,7 +65,7 @@ class SearchBar extends StatelessWidget {
       (point) => LatLng(point[0], point[1]) 
     ).toList();
 
-    mapaBloc.add( OnCrearRutaInicioDestino(rutaCoordenadas, distancia, duracion));
+    mapaBloc.add( OnCrearRutaInicioDestino(rutaCoordenadas, distancia, duracion, resultado.nombreDestino));
     Navigator.of(context).pop();
 
     busquedaBloc.add( OnAgregarHistorial(resultado) );
